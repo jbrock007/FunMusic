@@ -195,7 +195,15 @@ def main():
     MODEL_NAME = "InspireMusic-Base"  # Options: InspireMusic-Base, InspireMusic-1.5B, InspireMusic-1.5B-Long
     GPU_ID = 0  # Use 0 for first GPU, -1 for CPU
     FAST_MODE = True  # Set to True for faster inference (without flow matching)
-    OUTPUT_DIR = "exp/test_outputs"
+
+    # Use paths within the repository
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    MODEL_DIR = os.path.join(SCRIPT_DIR, "pretrained_models", MODEL_NAME)
+    OUTPUT_DIR = os.path.join(SCRIPT_DIR, "exp", "test_outputs")
+
+    # Create directories if they don't exist
+    os.makedirs(os.path.dirname(MODEL_DIR), exist_ok=True)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # Check if CUDA is available
     if GPU_ID >= 0:
@@ -209,13 +217,14 @@ def main():
 
     # Initialize model
     print(f"\n[2/4] Initializing InspireMusic model: {MODEL_NAME}")
+    print(f"  Model directory: {MODEL_DIR}")
     print(f"  Fast mode: {FAST_MODE}")
     print(f"  Output directory: {OUTPUT_DIR}")
 
     try:
         model = InspireMusicModel(
             model_name=MODEL_NAME,
-            model_dir=None,  # Will auto-download if not present
+            model_dir=MODEL_DIR,  # Use explicit path within repository
             min_generate_audio_seconds=10.0,
             max_generate_audio_seconds=30.0,
             sample_rate=24000,
